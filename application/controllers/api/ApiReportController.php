@@ -77,7 +77,31 @@ class ApiReportController extends RestController
 
                 array_push($result, $data);
             }
-            $this->response($result, RestController::HTTP_OK);
+
+            $final = array();
+            $exist = false;
+            foreach ($result as $result_val) {
+                foreach ($final as $final_val) {
+                    if ($result_val['Id_Agent'] === $final_val['Id_Agent']) {
+                        $final_val['Points'] += $result_val['Points'];
+                        $final_val['Point']->Centrale += $result_val['Point']->Centrale;
+                        $final_val['Point']->Voicelog += $result_val['Point']->Voicelog;
+                        $final_val['Point']->Poste_RDV += $result_val['Point']->Poste_RDV;
+                        $final_val['Ligne']->Centrale += $result_val['Ligne']->Centrale;
+                        $final_val['Ligne']->Voicelog += $result_val['Ligne']->Voicelog;
+                        $final_val['Ligne']->Poste_RDV += $result_val['Ligne']->Poste_RDV;
+                        $exist = true;
+                    }
+                }
+
+                if (!$exist) {
+                    array_push($final, $result_val);
+                }
+
+                $exist = false;
+            }
+
+            $this->response($final, RestController::HTTP_OK);
         } else {
             $this->response([
                 'status' => false,
