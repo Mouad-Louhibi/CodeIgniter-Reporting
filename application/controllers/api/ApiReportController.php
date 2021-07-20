@@ -29,19 +29,52 @@ class ApiReportController extends RestController
         $report = $report->get_appelByDate($date1, $date2);
 
         if ($report != []) {
-            $result = [];
+            $result =  array();
             foreach ($report as $value) {
+                $ligne = new stdClass;
+                $point = new stdClass;
                 $data  = [
-                    'Id' => $value['Id'],
                     'Id_Agent' => $value['Id_Agent'],
-                    'Id_Client' => $value['Id_Client'],
-                    'Id_Produit' => $value['Id_Produit'],
-                    'Id_commercial' => $value['Id_commercial'],
-                    'Id_typeAppel' => $value['Id_typeAppel'],
-                    'Quantite' => $value['Quantite'],
-                    'Prix' => $value['Prix'],
-                    'Point' => $value['Point'],
+                    'Points' => $value['Point'],
+                    'Voie' => $value['Voie'],
+                    'ServiceVendu' => $value['ServiceVendu'],
+                    'Point' => null,
+                    'Ligne' => null,
                 ];
+                $ligne->Centrale = $ligne->Poste_RDV = $ligne->Voicelog = $point->Centrale = $point->Poste_RDV = $point->Voicelog = 0;
+
+                if (strpos($value['ServiceVendu'], 'Centrale') !== false) {
+                    $ligne->Centrale++;
+                    $data['Points'] -= 1.3;
+                    $point->Centrale += 1.3;
+                }
+
+                switch ($value['Voie']) {
+                    case 'Poste RDV':
+                        if ($data['Points'])
+                            $ligne->Poste_RDV++;
+                        $point->Poste_RDV = $data['Points'];
+                        break;
+                    case 'Poste Email':
+                        if ($data['Points'])
+                            $ligne->Poste_RDV++;
+                        $point->Poste_RDV = $data['Points'];
+                        break;
+                    case 'Poste Normal':
+                        if ($data['Points'])
+                            $ligne->Poste_RDV++;
+                        $point->Poste_RDV = $data['Points'];
+                        break;
+                    case 'Voicelog':
+                        $ligne->Voicelog++;
+                        $point->Voicelog = $data['Points'];
+                        break;
+                }
+
+                $data['Points'] = $value['Point'];
+                $data['Point'] = $point;
+                $data['Ligne'] = $ligne;
+
                 array_push($result, $data);
             }
             $this->response($result, RestController::HTTP_OK);
