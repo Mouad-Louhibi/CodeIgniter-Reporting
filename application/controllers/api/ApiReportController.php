@@ -36,11 +36,10 @@ class ApiReportController extends RestController
                 $data  = [
                     'Id_Agent' => $value['Id_Agent'],
                     'Points' => $value['Point'],
-                    'Voie' => $value['Voie'],
-                    'ServiceVendu' => $value['ServiceVendu'],
                     'Point' => null,
                     'Ligne' => null,
                 ];
+
                 $ligne->Centrale = $ligne->Poste_RDV = $ligne->Voicelog = $point->Centrale = $point->Poste_RDV = $point->Voicelog = 0;
 
                 if (strpos($value['ServiceVendu'], 'Centrale') !== false) {
@@ -81,8 +80,15 @@ class ApiReportController extends RestController
             $final = array();
             $exist = false;
             foreach ($result as $result_val) {
+
+                $agent = new ReportModel;
+                $agent = $agent->get_agent($result_val['Id_Agent']);
+                $result_val['Full Name'] = $agent[0]['Prenom'] . ' ' . $agent[0]['Nom'];
+
                 foreach ($final as $final_val) {
+
                     if ($result_val['Id_Agent'] === $final_val['Id_Agent']) {
+
                         $final_val['Points'] += $result_val['Points'];
                         $final_val['Point']->Centrale += $result_val['Point']->Centrale;
                         $final_val['Point']->Voicelog += $result_val['Point']->Voicelog;
@@ -90,6 +96,7 @@ class ApiReportController extends RestController
                         $final_val['Ligne']->Centrale += $result_val['Ligne']->Centrale;
                         $final_val['Ligne']->Voicelog += $result_val['Ligne']->Voicelog;
                         $final_val['Ligne']->Poste_RDV += $result_val['Ligne']->Poste_RDV;
+
                         $exist = true;
                     }
                 }

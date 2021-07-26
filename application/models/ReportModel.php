@@ -17,4 +17,17 @@ class ReportModel extends CI_Model
         $data = $this->db->query("select * from appel where Date>='$date1' and Date<='$date2'")->result_array();
         return $data;
     }
+
+    public function get_agent($id)
+    {
+        $this->load->database();
+        $data = $this->db->query("
+                                select users.Nom, users.Prenom
+                                from agent
+                                inner join users
+                                on agent.Id_User = users.id
+                                where agent.Id_User = {$id}
+                                ")->result_array();
+        return $data;
+    }
 }
