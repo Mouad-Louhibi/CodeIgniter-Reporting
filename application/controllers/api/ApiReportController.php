@@ -38,6 +38,8 @@ class ApiReportController extends RestController
                     'Points' => $value['Point'],
                     'Point' => null,
                     'Ligne' => null,
+                    'Total Points' => 0,
+                    'Total Lignes' => 0,
                 ];
 
                 $ligne->Centrale = $ligne->Poste_RDV = $ligne->Voicelog = $point->Centrale = $point->Poste_RDV = $point->Voicelog = 0;
@@ -80,7 +82,6 @@ class ApiReportController extends RestController
             $final = array();
             $exist = false;
             foreach ($result as $result_val) {
-
                 $agent = new ReportModel;
                 $agent = $agent->get_agent($result_val['Id_Agent']);
                 $result_val['Full Name'] = $agent[0]['Prenom'] . ' ' . $agent[0]['Nom'];
@@ -89,13 +90,21 @@ class ApiReportController extends RestController
 
                     if ($result_val['Id_Agent'] === $final_val['Id_Agent']) {
 
-                        $final_val['Points'] += $result_val['Points'];
                         $final_val['Point']->Centrale += $result_val['Point']->Centrale;
                         $final_val['Point']->Voicelog += $result_val['Point']->Voicelog;
                         $final_val['Point']->Poste_RDV += $result_val['Point']->Poste_RDV;
+                        // $result_val['Total Points'] += $final_val['Point']->Centrale + $final_val['Point']->Voicelog + $final_val['Point']->Poste_RDV;
+                        $result_1 = $final_val['Point']->Centrale + $final_val['Point']->Voicelog + $final_val['Point']->Poste_RDV;
+                        echo  $result_val['Id_Agent'] . "__________________" . $result_1 . ":";
+                        $result_val['Total Points'] += $result_1;
+
                         $final_val['Ligne']->Centrale += $result_val['Ligne']->Centrale;
                         $final_val['Ligne']->Voicelog += $result_val['Ligne']->Voicelog;
                         $final_val['Ligne']->Poste_RDV += $result_val['Ligne']->Poste_RDV;
+                        // $result_val['Total Lignes'] += $final_val['Ligne']->Centrale + $final_val['Ligne']->Voicelog + $final_val['Ligne']->Poste_RDV;
+                        $result_2 = $final_val['Ligne']->Centrale + $final_val['Ligne']->Voicelog + $final_val['Ligne']->Poste_RDV;
+                        echo $result_val['Id_Agent'] .  "__________________" . $result_2 . ":";
+                        $result_val['Total Lignes'] += $result_2;
 
                         $exist = true;
                     }
