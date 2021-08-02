@@ -4,6 +4,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class ReportModel extends CI_Model
 {
 
+    // GET all Appels
     public function get_appel()
     {
         $this->load->database();
@@ -11,6 +12,7 @@ class ReportModel extends CI_Model
         return $data;
     }
 
+    // GET Appel by Dates
     public function get_appelByDate($date1, $date2)
     {
         $this->load->database();
@@ -18,9 +20,13 @@ class ReportModel extends CI_Model
         return $data;
     }
 
+    // GET Agent by Id
     public function get_agent($id)
     {
+        // Database Connection
         $this->load->database();
+
+        // Using inner join to get user informations by Id_User from agent
         $data = $this->db->query("
                                 select users.Nom, users.Prenom
                                 from agent
