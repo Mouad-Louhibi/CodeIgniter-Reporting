@@ -22,18 +22,18 @@ class ApiReportController extends RestController
         $this->response($report, 200);
     }
 
-    // POST Dates and GET Repport
+    // POST Dates and GET Report
     public function reporting_post()
     {
-        // Instance ReportModel
+        // ReportModel Instance
         $report = new ReportModel;
         // This function get the dates values from the POST Method then set them in date1 & date2
         $date1 = $this->post('date1');
         $date2 = $this->post('date2');
-        // Return all appels between date1 & date2
+        // Return all Appels between date1 & date2
         $report = $report->get_appelByDate($date1, $date2);
 
-        // Checking if the report array is empty or not
+        // Checking if the report Array is empty or not
         if ($report != []) {
             // Declaration of a new Array
             $result = array();
@@ -55,11 +55,11 @@ class ApiReportController extends RestController
                 // Set properties Centrale & Poste_RDV & Voicelog into Point & Ligne objects then we initialize them
                 $ligne->Centrale = $ligne->Poste_RDV = $ligne->Voicelog = $point->Centrale = $point->Poste_RDV = $point->Voicelog = 0;
 
-                // We use strpos function for checking the existance of the word 'Centrale' in $value['ServiceVendu'] that containe a string 
+                // We use strpos function for checking the existance of the word 'Centrale' in $value['ServiceVendu'] that contain a string 
                 if (strpos($value['ServiceVendu'], 'Centrale') !== false) {
-                    // If 'Centrale' is exist, we increment Centrale values
+                    // If 'Centrale' exist, we increment Centrale values
                     $ligne->Centrale++;
-                    // Then we have to remove the Centrale points from $data['Points'] and add hem to $point->Centrale
+                    // Then we have to remove the Centrale points from $data['Points'] and add them to $point->Centrale
                     $data['Points'] -= 1.3;
                     $point->Centrale += 1.3;
                 }
@@ -91,20 +91,20 @@ class ApiReportController extends RestController
 
                 // Reinitialization of Points
                 $data['Points'] = $value['Point'];
-                // Here we link each of poit & ligne with $data['Point'] & $data['Ligne']
+                // Here we link each of point & ligne with $data['Point'] & $data['Ligne']
                 $data['Point'] = $point;
                 $data['Ligne'] = $ligne;
 
-                // After create a new Array we push it in the old one
+                // After to create a new Array we push it in the old one
                 array_push($result, $data);
             }
 
-            // In the Array $result we can find a duplicate Agent
+            // In the Array $result we can find a duplicated Agent
             // We declare this Array $final
             $final = array();
             $exist = false;
 
-            // By this loop we can remove duplicate Agent
+            // By this loop we can remove duplicated Agent
             foreach ($result as $result_val) {
 
                 // Remove Points from $result, we will never need it, for not to display with the results neither
@@ -112,7 +112,7 @@ class ApiReportController extends RestController
 
                 // Create new instance of ReportModel
                 $agent = new ReportModel;
-                // Call the get_agent() that get Id_Agent as parametre & return Agent informatios
+                // Call the get_agent() function that get the Id_Agent as parametre & return Agent informatios
                 $agent = $agent->get_agent($result_val['Id_Agent']);
                 // Concatainate tow strings to get the Full name
                 $result_val['Full_Name'] = $agent[0]['Prenom'] . ' ' . $agent[0]['Nom'];
