@@ -115,7 +115,7 @@ class ApiReportController extends RestController
                 // Call the get_agent() that get Id_Agent as parametre & return Agent informatios
                 $agent = $agent->get_agent($result_val['Id_Agent']);
                 // Concatainate tow strings to get the Full name
-                $result_val['Full Name'] = $agent[0]['Prenom'] . ' ' . $agent[0]['Nom'];
+                $result_val['Full_Name'] = $agent[0]['Prenom'] . ' ' . $agent[0]['Nom'];
 
                 foreach ($final as $final_val) {
 
